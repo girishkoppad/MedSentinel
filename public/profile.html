@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - MedSentinel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <!-- Navigation -->
+    <nav class="bg-black/50 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="material-symbols-rounded text-white text-xl">health_and_safety</span>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">MedSentinel</span>
+                </a>
+                <div class="flex items-center space-x-3">
+                    <a href="/" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Home</a>
+                    <a href="/hospitals.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Hospitals</a>
+                    <a href="/schemes.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Schemes</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Profile Header -->
+        <header class="flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
+            <div class="flex items-center gap-6">
+                <div class="relative">
+                    <div class="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 border-4 border-white/10 flex items-center justify-center text-4xl font-bold shadow-2xl shadow-blue-500/30">
+                        AS
+                    </div>
+                    <div class="absolute bottom-1 right-1 bg-green-500 text-white p-2 rounded-full shadow-lg border-2 border-gray-900">
+                        <span class="material-symbols-rounded text-sm">verified</span>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-extrabold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Aditi Sharma</h1>
+                    <div class="flex gap-3">
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-lg text-xs font-bold border border-blue-500/30">Patient ID: MS-99201</span>
+                        <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-lg text-xs font-bold border border-green-500/30">Ayushman Bharat Active</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="editProfile()" class="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 font-semibold rounded-xl hover:bg-white/10 transition-all">
+                    <span class="material-symbols-rounded">edit</span> Edit Profile
+                </button>
+                <button onclick="logout()" class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-red-500/50 transition-all">
+                    <span class="material-symbols-rounded">logout</span> Logout
+                </button>
+            </div>
+        </header>
+
+        <div class="grid md:grid-cols-12 gap-6">
+            <!-- Sidebar -->
+            <div class="md:col-span-4 space-y-6">
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10">
+                    <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                        <span class="material-symbols-rounded text-green-400">security</span>
+                        Medical Identity
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                            <p class="text-xs text-gray-400 font-medium uppercase mb-1">Blood Group</p>
+                            <p class="text-xl font-bold">O Positive (O+)</p>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                            <p class="text-xs text-gray-400 font-medium uppercase mb-1">Allergies</p>
+                            <p class="text-md font-bold text-red-400">Penicillin, Peanuts</p>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                            <p class="text-xs text-gray-400 font-medium uppercase mb-1">Emergency Contact</p>
+                            <p class="text-md font-bold">+91 98765-43210</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-xl p-8 rounded-2xl border border-blue-500/30">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                        <span class="material-symbols-rounded">account_balance_wallet</span>
+                        Scheme Eligibility
+                    </h3>
+                    <p class="text-sm text-gray-300 mb-6">You are currently eligible for 4 high-priority government health schemes.</p>
+                    <a href="/schemes.html" class="block w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl text-center hover:shadow-lg hover:shadow-blue-500/50 transition-all">View All Schemes</a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="md:col-span-8 space-y-6">
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl border border-white/10">
+                    <div class="flex border-b border-white/10">
+                        <button onclick="showTab('saved')" class="tab-btn px-8 py-5 text-blue-400 border-b-2 border-blue-500 font-bold text-sm">Saved Hospitals</button>
+                        <button onclick="showTab('schemes')" class="tab-btn px-8 py-5 text-gray-400 font-semibold text-sm hover:text-white">Saved Schemes</button>
+                        <button onclick="showTab('history')" class="tab-btn px-8 py-5 text-gray-400 font-semibold text-sm hover:text-white">Search History</button>
+                    </div>
+                    <div class="p-8">
+                        <div id="savedHospitals" class="tab-content">
+                            <div id="savedList" class="grid sm:grid-cols-2 gap-4"></div>
+                        </div>
+                        <div id="savedSchemes" class="tab-content hidden">
+                            <p class="text-gray-400">No saved schemes yet.</p>
+                        </div>
+                        <div id="searchHistory" class="tab-content hidden">
+                            <p class="text-gray-400">No search history available.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10">
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <h3 class="text-lg font-bold">My Documents</h3>
+                            <p class="text-xs text-gray-400">Encrypted vault for scheme verification</p>
+                        </div>
+                        <button onclick="uploadDocument()" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/50 transition-all">
+                            <span class="material-symbols-rounded text-sm">add</span> Upload New
+                        </button>
+                    </div>
+                    <div class="grid sm:grid-cols-3 gap-4">
+                        <div class="p-4 bg-white/5 border border-white/10 rounded-xl hover:border-blue-500/50 cursor-pointer transition-all">
+                            <div class="flex items-center gap-3 mb-3">
+                                <span class="material-symbols-rounded text-blue-400">badge</span>
+                                <span class="text-sm font-bold truncate">Aadhar_Card.pdf</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-gray-400 uppercase">Verified</span>
+                                <span class="material-symbols-rounded text-green-400 text-sm">check_circle</span>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white/5 border border-white/10 rounded-xl hover:border-blue-500/50 cursor-pointer transition-all">
+                            <div class="flex items-center gap-3 mb-3">
+                                <span class="material-symbols-rounded text-blue-400">payments</span>
+                                <span class="text-sm font-bold truncate">Income_Cert.jpg</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-gray-400 uppercase">Verified</span>
+                                <span class="material-symbols-rounded text-green-400 text-sm">check_circle</span>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white/5 border border-white/10 rounded-xl hover:border-blue-500/50 cursor-pointer transition-all">
+                            <div class="flex items-center gap-3 mb-3">
+                                <span class="material-symbols-rounded text-blue-400">description</span>
+                                <span class="text-sm font-bold truncate">Ration_Card.pdf</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-gray-400 uppercase">Pending</span>
+                                <span class="material-symbols-rounded text-gray-400 text-sm">schedule</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function loadSavedHospitals() {
+            try {
+                const response = await fetch('/api/saved-items/1');
+                const hospitals = await response.json();
+                
+                document.getElementById('savedList').innerHTML = hospitals.map(h => `
+                    <div class="bg-white/5 p-5 rounded-xl border border-white/10 hover:border-blue-500/50 cursor-pointer transition-all">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <span class="material-symbols-rounded text-white text-2xl">local_hospital</span>
+                            </div>
+                            <button onclick="removeSaved(${h.id})" class="text-red-400 hover:text-red-300">
+                                <span class="material-symbols-rounded">bookmark_remove</span>
+                            </button>
+                        </div>
+                        <h4 class="font-bold mb-1">${h.name}</h4>
+                        <p class="text-xs text-gray-400 mb-3">${h.location}</p>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-green-400 flex items-center gap-0.5">
+                                <span class="material-symbols-rounded text-sm">star</span> ${h.rating}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading saved hospitals:', error);
+            }
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('text-blue-400', 'border-b-2', 'border-blue-500');
+                b.classList.add('text-gray-400');
+            });
+            
+            if (tab === 'saved') {
+                document.getElementById('savedHospitals').classList.remove('hidden');
+                event.target.classList.add('text-blue-400', 'border-b-2', 'border-blue-500');
+                event.target.classList.remove('text-gray-400');
+            } else if (tab === 'schemes') {
+                document.getElementById('savedSchemes').classList.remove('hidden');
+                event.target.classList.add('text-blue-400', 'border-b-2', 'border-blue-500');
+                event.target.classList.remove('text-gray-400');
+            } else {
+                document.getElementById('searchHistory').classList.remove('hidden');
+                event.target.classList.add('text-blue-400', 'border-b-2', 'border-blue-500');
+                event.target.classList.remove('text-gray-400');
+            }
+        }
+
+        async function removeSaved(hospitalId) {
+            try {
+                await fetch(`/api/saved-items/1/${hospitalId}`, { method: 'DELETE' });
+                loadSavedHospitals();
+            } catch (error) {
+                console.error('Error removing hospital:', error);
+            }
+        }
+
+        function editProfile() {
+            alert('Edit profile functionality - opens profile editor');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/';
+            }
+        }
+
+        function uploadDocument() {
+            alert('Document upload functionality - opens file picker');
+        }
+
+        loadSavedHospitals();
+    </script>
+</body>
+</html>
