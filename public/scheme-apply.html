@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Scheme - MedSentinel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        select option { background-color: #1f2937; color: white; }
+        button:active { transform: scale(0.98); }
+        input:focus, select:focus, textarea:focus { outline: none; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white min-h-screen">
+
+    <!-- Nav -->
+    <nav class="bg-black/50 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <span class="material-symbols-rounded text-white text-xl">health_and_safety</span>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">MedSentinel</span>
+                </a>
+                <div class="flex items-center gap-3">
+                    <a href="/eligibility.html" class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all flex items-center gap-1">
+                        <span class="material-symbols-rounded text-base">arrow_back</span> Back to Eligibility
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <!-- Scheme Info Banner -->
+        <div id="schemeBanner" class="mb-8 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-2xl p-6 backdrop-blur-xl">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-rounded text-white text-2xl">health_and_safety</span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <h1 id="schemeTitle" class="text-2xl font-bold text-white">Scheme Application</h1>
+                        <span id="schemeType" class="px-2 py-0.5 bg-blue-500/20 text-blue-300 text-xs font-bold rounded-lg border border-blue-500/30">National</span>
+                    </div>
+                    <div class="flex flex-wrap gap-4 text-sm text-gray-300">
+                        <span class="flex items-center gap-1"><span class="material-symbols-rounded text-green-400 text-base">shield</span><span id="schemeCoverage">₹5,00,000/year</span></span>
+                        <span class="flex items-center gap-1"><span class="material-symbols-rounded text-yellow-400 text-base">call</span>Helpline: <span id="schemeHelpline" class="font-semibold text-white">14555</span></span>
+                        <span class="flex items-center gap-1"><span class="material-symbols-rounded text-blue-400 text-base">verified</span>Government Verified</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+
+            <!-- Application Form -->
+            <div class="lg:col-span-2">
+                <form id="applyForm" class="space-y-6">
+
+                    <!-- Personal Details -->
+                    <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-lg font-bold mb-5 flex items-center gap-2">
+                            <span class="material-symbols-rounded text-blue-400">person</span> Personal Details
+                        </h2>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Full Name *</label>
+                                <input type="text" id="fullName" required placeholder="As per Aadhaar card"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Date of Birth *</label>
+                                <input type="date" id="dob" required
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Gender *</label>
+                                <select id="gender" required class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                    <option value="">Select gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Mobile Number *</label>
+                                <input type="tel" id="mobile" required placeholder="10-digit mobile number" maxlength="10"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Email Address</label>
+                                <input type="email" id="email" placeholder="Optional"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Identity Documents -->
+                    <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-lg font-bold mb-5 flex items-center gap-2">
+                            <span class="material-symbols-rounded text-purple-400">badge</span> Identity Documents
+                        </h2>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Aadhaar Number *</label>
+                                <input type="text" id="aadhaar" required placeholder="XXXX XXXX XXXX" maxlength="14"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    oninput="formatAadhaar(this)">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Ration Card Number</label>
+                                <input type="text" id="rationCard" placeholder="BPL/APL card number"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Ration Card Type</label>
+                                <select id="rationType" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                    <option value="">Select type</option>
+                                    <option value="bpl">BPL (Below Poverty Line)</option>
+                                    <option value="apl">APL (Above Poverty Line)</option>
+                                    <option value="aay">AAY (Antyodaya Anna Yojana)</option>
+                                    <option value="none">No Ration Card</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Annual Family Income *</label>
+                                <select id="annualIncome" required class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                    <option value="">Select range</option>
+                                    <option value="below1L">Below ₹1,00,000</option>
+                                    <option value="1L-2L">₹1,00,000 – ₹2,00,000</option>
+                                    <option value="2L-3L">₹2,00,000 – ₹3,00,000</option>
+                                    <option value="3L-5L">₹3,00,000 – ₹5,00,000</option>
+                                    <option value="above5L">Above ₹5,00,000</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-lg font-bold mb-5 flex items-center gap-2">
+                            <span class="material-symbols-rounded text-green-400">location_on</span> Address Details
+                        </h2>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="sm:col-span-2">
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Full Address *</label>
+                                <textarea id="address" required rows="2" placeholder="House No., Street, Area"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">District *</label>
+                                <input type="text" id="district" required placeholder="e.g. Bengaluru Urban"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">State *</label>
+                                <select id="state" required class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                    <option value="">Select state</option>
+                                    <option value="Karnataka" selected>Karnataka</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">PIN Code *</label>
+                                <input type="text" id="pincode" required placeholder="6-digit PIN" maxlength="6"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Area Type *</label>
+                                <select id="areaType" required class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                    <option value="">Select type</option>
+                                    <option value="urban">Urban</option>
+                                    <option value="rural">Rural</option>
+                                    <option value="semi-urban">Semi-Urban</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Family Members -->
+                    <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+                        <h2 class="text-lg font-bold mb-5 flex items-center gap-2">
+                            <span class="material-symbols-rounded text-orange-400">groups</span> Family Details
+                        </h2>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Total Family Members *</label>
+                                <select id="familyCount" required class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                    <option value="">Select</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6+">6 or more</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Earning Members</label>
+                                <select id="earningMembers" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                    <option value="">Select</option>
+                                    <option value="0">None</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3+">3 or more</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Declaration -->
+                    <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" id="declaration" required class="mt-1 w-5 h-5 rounded bg-white/10 border-white/20 text-blue-500 focus:ring-blue-500 flex-shrink-0">
+                            <span class="text-sm text-gray-300 leading-relaxed">
+                                I hereby declare that all the information provided above is true and correct to the best of my knowledge. I understand that providing false information may result in rejection of my application and legal action.
+                            </span>
+                        </label>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg rounded-2xl hover:shadow-2xl hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-rounded">send</span>
+                        Submit Application
+                    </button>
+                </form>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-5">
+
+                <!-- Steps -->
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+                    <h3 class="font-bold text-white mb-4 flex items-center gap-2">
+                        <span class="material-symbols-rounded text-blue-400">checklist</span> Application Steps
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex gap-3">
+                            <div class="w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
+                            <div>
+                                <div class="text-sm font-semibold text-white">Fill this form</div>
+                                <div class="text-xs text-gray-400">Provide personal & family details</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold flex-shrink-0 text-gray-400">2</div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-300">Document Verification</div>
+                                <div class="text-xs text-gray-400">Aadhaar & ration card verified</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold flex-shrink-0 text-gray-400">3</div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-300">Card Issued</div>
+                                <div class="text-xs text-gray-400">Health card sent to your address</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold flex-shrink-0 text-gray-400">4</div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-300">Avail Benefits</div>
+                                <div class="text-xs text-gray-400">Cashless treatment at hospitals</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents Required -->
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+                    <h3 class="font-bold text-white mb-4 flex items-center gap-2">
+                        <span class="material-symbols-rounded text-yellow-400">folder</span> Documents Required
+                    </h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li class="flex items-center gap-2"><span class="material-symbols-rounded text-green-400 text-base">check_circle</span>Aadhaar Card (all members)</li>
+                        <li class="flex items-center gap-2"><span class="material-symbols-rounded text-green-400 text-base">check_circle</span>Ration Card (BPL/APL)</li>
+                        <li class="flex items-center gap-2"><span class="material-symbols-rounded text-green-400 text-base">check_circle</span>Income Certificate</li>
+                        <li class="flex items-center gap-2"><span class="material-symbols-rounded text-green-400 text-base">check_circle</span>Residence Proof</li>
+                        <li class="flex items-center gap-2"><span class="material-symbols-rounded text-green-400 text-base">check_circle</span>Passport-size Photos</li>
+                    </ul>
+                </div>
+
+                <!-- Help -->
+                <div class="bg-gradient-to-br from-blue-600/20 to-purple-600/20 backdrop-blur-xl rounded-2xl p-6 border border-blue-500/30">
+                    <h3 class="font-bold text-white mb-2 flex items-center gap-2">
+                        <span class="material-symbols-rounded text-blue-400">support_agent</span> Need Help?
+                    </h3>
+                    <p class="text-sm text-gray-300 mb-4">Our support team is available 24/7 to assist with your application.</p>
+                    <a href="tel:14555" class="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-500 transition-all">
+                        <span class="material-symbols-rounded text-base">call</span> Call 14555 (Free)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-10 max-w-md w-full border border-white/10 text-center shadow-2xl">
+            <div class="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-green-500/40">
+                <span class="material-symbols-rounded text-6xl text-green-400">check_circle</span>
+            </div>
+            <h2 class="text-3xl font-extrabold text-white mb-2">Application Submitted!</h2>
+            <p class="text-gray-400 mb-2">Your application for</p>
+            <p id="modalSchemeName" class="text-blue-400 font-bold text-lg mb-4">—</p>
+            <div class="bg-white/5 rounded-xl p-4 mb-6 text-left space-y-2">
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-400">Application ID</span>
+                    <span id="appId" class="text-white font-mono font-bold">—</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-400">Submitted On</span>
+                    <span id="appDate" class="text-white font-semibold">—</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-400">Status</span>
+                    <span class="text-yellow-400 font-semibold">Under Review</span>
+                </div>
+            </div>
+            <p class="text-sm text-gray-400 mb-6">You will receive an SMS confirmation on your registered mobile number within 24 hours.</p>
+            <div class="flex gap-3">
+                <a href="/hospitals.html" class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition-all text-sm">
+                    Find Hospitals
+                </a>
+                <a href="/" class="flex-1 py-3 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 transition-all text-sm">
+                    Go Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Read scheme details from URL params
+        const params = new URLSearchParams(window.location.search);
+        const schemeName = params.get('scheme') || 'Government Health Scheme';
+        const coverage = params.get('coverage') || '₹5,00,000/year';
+        const type = params.get('type') || 'National';
+        const helpline = params.get('helpline') || '14555';
+
+        document.getElementById('schemeTitle').textContent = schemeName;
+        document.getElementById('schemeCoverage').textContent = coverage;
+        document.getElementById('schemeType').textContent = type;
+        document.getElementById('schemeHelpline').textContent = helpline;
+        document.title = `Apply for ${schemeName} - MedSentinel`;
+
+        // Format Aadhaar as XXXX XXXX XXXX
+        function formatAadhaar(input) {
+            let val = input.value.replace(/\D/g, '').substring(0, 12);
+            input.value = val.replace(/(\d{4})(?=\d)/g, '$1 ');
+        }
+
+        // Form submit
+        document.getElementById('applyForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<span class="material-symbols-rounded animate-spin">autorenew</span> Submitting...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const appId = 'MS' + Date.now().toString().slice(-8);
+                const now = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+                // Save to localStorage for profile page
+                const applied = JSON.parse(localStorage.getItem('appliedSchemes') || '[]');
+                const alreadyExists = applied.some(s => s.name === schemeName);
+                if (!alreadyExists) {
+                    applied.push({ name: schemeName, coverage, type, helpline, appId, date: now, status: 'Under Review' });
+                    localStorage.setItem('appliedSchemes', JSON.stringify(applied));
+                }
+
+                document.getElementById('modalSchemeName').textContent = schemeName;
+                document.getElementById('appId').textContent = appId;
+                document.getElementById('appDate').textContent = now;
+                document.getElementById('successModal').classList.remove('hidden');
+
+                btn.innerHTML = '<span class="material-symbols-rounded">send</span> Submit Application';
+                btn.disabled = false;
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

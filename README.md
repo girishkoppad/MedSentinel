@@ -52,6 +52,9 @@ A full-stack web application for comparing healthcare costs across hospitals and
    http://localhost:3000
    ```
 
+- If your `PORT` environment variable is set, the server will use that instead.
+- If the app is running on another port (e.g., 3001), use `http://localhost:<PORT>`.
+
 ## Project Structure
 
 ```

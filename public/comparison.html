@@ -10,10 +10,12 @@
     <link rel="stylesheet" href="/css/styles.css">
     <style>
         .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        select option { background-color: #1f2937; color: white; }
+        .hospital-chip { transition: all 0.2s; }
+        .bar-fill { transition: width 0.8s ease-out; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-    <!-- Navigation -->
     <nav class="bg-black/50 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
@@ -34,150 +36,449 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <header class="mb-16">
-            <h1 class="text-5xl font-extrabold mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Cost Intelligence Dashboard</h1>
-            <p class="text-gray-400 text-lg max-w-2xl">Precision comparison of treatment costs across top-tier medical institutions. Data verified by Government Health Authorities.</p>
-        </header>
 
-        <div class="grid md:grid-cols-3 gap-6 mb-8">
-            <div class="md:col-span-2 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10">
-                <h4 class="font-bold text-lg mb-6 flex items-center gap-2">
-                    <span class="material-symbols-rounded text-blue-400">bar_chart</span>
-                    Cost Distribution Analysis
-                </h4>
-                <div id="costChart" class="space-y-6"></div>
-            </div>
+        <!-- Header -->
+        <div class="mb-10">
+            <h1 class="text-5xl font-extrabold mb-3 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Cost Comparison</h1>
+            <p class="text-gray-400 text-lg">Select hospitals and a treatment to compare costs side by side.</p>
+        </div>
 
-            <div class="bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-xl p-8 rounded-2xl relative overflow-hidden border border-green-500/30">
-                <span class="bg-green-500/90 text-white text-xs font-bold px-2 py-1 rounded-lg uppercase">Best Value</span>
-                <h4 class="text-2xl font-bold mt-4">City General Hospital</h4>
-                <p class="text-sm text-gray-300 mt-2">Highest saving found relative to quality rating.</p>
-                <div class="mt-8">
-                    <p class="text-xs font-bold uppercase text-gray-400">You Save</p>
-                    <p class="text-green-400 text-3xl font-black">₹65,000</p>
+        <!-- Step 1: Selection Panel -->
+        <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-8 border border-white/10 mb-8">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <span class="material-symbols-rounded text-blue-400">tune</span>
+                Step 1: Select Hospitals & Treatment
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <!-- Treatment selector -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Treatment / Procedure</label>
+                    <select id="treatmentSelect" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500">
+                        <option value="">Select a treatment</option>
+                        <option value="General consultation">General Consultation / OPD</option>
+                        <option value="Inpatient admission">Inpatient Admission / IPD</option>
+                        <option value="Diabetes treatment">Diabetes Treatment</option>
+                        <option value="General surgery">Appendectomy / General Surgery</option>
+                        <option value="Cardiology treatment">Cardiology Treatment</option>
+                        <option value="Knee Replacement">Knee Replacement</option>
+                        <option value="Hip Replacement">Hip Replacement</option>
+                        <option value="Normal Delivery">Normal Delivery</option>
+                        <option value="C-Section">C-Section</option>
+                        <option value="Dialysis">Dialysis (per session)</option>
+                        <option value="Chemotherapy">Chemotherapy (per cycle)</option>
+                    </select>
+                </div>
+
+                <!-- Hospital search -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Search & Add Hospital (max 4)</label>
+                    <div class="relative">
+                        <span class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">search</span>
+                        <input id="hospitalSearch" type="text" placeholder="Type hospital name..." autocomplete="off"
+                            class="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500">
+                        <div id="searchDropdown" class="hidden absolute z-20 w-full mt-1 bg-gray-800 border border-white/10 rounded-xl shadow-2xl max-h-52 overflow-y-auto"></div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10 mb-8">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="bg-white/5 border-b border-white/10">
-                            <th class="p-6 font-bold text-gray-400">Metric</th>
-                            <th class="p-6 font-bold">St. Jude Medical</th>
-                            <th class="p-6 font-bold">Apollo Multispeciality</th>
-                            <th class="p-6 font-bold bg-blue-500/10">City General</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-white/10">
-                        <tr>
-                            <td class="p-6 font-semibold text-sm">Total Procedure Cost</td>
-                            <td class="p-6">
-                                <p class="text-lg font-bold">₹1,45,000</p>
-                                <p class="text-xs text-gray-400">All-inclusive</p>
-                            </td>
-                            <td class="p-6">
-                                <p class="text-lg font-bold">₹2,10,000</p>
-                                <p class="text-xs text-gray-400">Plus diagnostics</p>
-                            </td>
-                            <td class="p-6 bg-blue-500/10">
-                                <p class="text-lg font-bold text-green-400">₹1,20,000</p>
-                                <p class="text-xs text-green-400 font-medium">Cheapest Option</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="p-6 font-semibold text-sm">Patient Rating</td>
-                            <td class="p-6">
-                                <div class="flex items-center gap-1 text-yellow-400">
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="font-bold ml-1 text-white">4.2</span>
-                                </div>
-                            </td>
-                            <td class="p-6">
-                                <div class="flex items-center gap-1 text-yellow-400">
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="font-bold ml-1 text-white">4.8</span>
-                                </div>
-                            </td>
-                            <td class="p-6 bg-blue-500/10">
-                                <div class="flex items-center gap-1 text-yellow-400">
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="material-symbols-rounded text-sm">star</span>
-                                    <span class="font-bold ml-1 text-white">4.0</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="p-6 font-semibold text-sm">Govt Schemes</td>
-                            <td class="p-6">
-                                <span class="bg-blue-500/20 text-blue-400 text-xs font-bold px-2 py-0.5 rounded border border-blue-500/30">Ayushman Bharat</span>
-                            </td>
-                            <td class="p-6">
-                                <span class="bg-blue-500/20 text-blue-400 text-xs font-bold px-2 py-0.5 rounded border border-blue-500/30">CGHS Verified</span>
-                            </td>
-                            <td class="p-6 bg-blue-500/10">
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="bg-blue-500/20 text-blue-400 text-xs font-bold px-2 py-0.5 rounded border border-blue-500/30">Ayushman Bharat</span>
-                                    <span class="bg-blue-500/20 text-blue-400 text-xs font-bold px-2 py-0.5 rounded border border-blue-500/30">State Health Card</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="p-6"></td>
-                            <td class="p-6">
-                                <button class="w-full py-3 rounded-xl border-2 border-white/10 text-white font-bold hover:bg-white/5 transition-all">Select Hospital</button>
-                            </td>
-                            <td class="p-6">
-                                <button class="w-full py-3 rounded-xl border-2 border-white/10 text-white font-bold hover:bg-white/5 transition-all">Select Hospital</button>
-                            </td>
-                            <td class="p-6 bg-blue-500/10">
-                                <button class="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold hover:shadow-lg hover:shadow-blue-500/50 transition-all">Select & Book</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-xl p-6 rounded-2xl flex items-center gap-6 border border-blue-500/30">
-            <div class="bg-white/10 p-3 rounded-full shadow-sm">
-                <span class="material-symbols-rounded text-blue-400 text-3xl">lightbulb</span>
-            </div>
+            <!-- Selected hospitals chips -->
             <div>
-                <h5 class="font-bold text-white">MedSentinel Smart Tip</h5>
-                <p class="text-gray-300 text-sm">Choosing City General Hospital could save you enough to cover 12 months of post-operative medication.</p>
+                <p class="text-sm font-semibold text-gray-400 mb-3">Selected Hospitals:</p>
+                <div id="selectedChips" class="flex flex-wrap gap-3 min-h-[44px]">
+                    <p class="text-sm text-gray-500 italic">No hospitals selected yet. Search above to add.</p>
+                </div>
+            </div>
+
+            <button onclick="runComparison()" id="compareBtn"
+                class="mt-6 px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+                <span class="material-symbols-rounded">compare_arrows</span> Compare Now
+            </button>
+        </div>
+
+        <!-- Step 2: Results (hidden until compare clicked) -->
+        <div id="resultsSection" class="hidden space-y-8">
+
+            <!-- Bar Chart -->
+            <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
+                <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                    <span class="material-symbols-rounded text-blue-400">bar_chart</span>
+                    Cost Distribution — <span id="chartTreatmentLabel" class="text-blue-400 ml-1"></span>
+                </h3>
+                <div id="costBars" class="space-y-5"></div>
+            </div>
+
+            <!-- Best Value Card + Summary -->
+            <div id="bestValueCard" class="grid md:grid-cols-3 gap-6"></div>
+
+            <!-- Comparison Table -->
+            <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10">
+                <div class="p-6 border-b border-white/10">
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <span class="material-symbols-rounded text-purple-400">table_chart</span>
+                        Detailed Comparison Table
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left" id="comparisonTable"></table>
+                </div>
+            </div>
+
+            <!-- Smart Tip -->
+            <div id="smartTip" class="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-xl p-6 rounded-2xl flex items-start gap-4 border border-blue-500/30">
+                <span class="material-symbols-rounded text-blue-400 text-3xl flex-shrink-0">lightbulb</span>
+                <div>
+                    <h5 class="font-bold text-white mb-1">MedSentinel Smart Tip</h5>
+                    <p id="smartTipText" class="text-gray-300 text-sm"></p>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
-        const hospitals = [
-            { name: 'St. Jude Medical Center', cost: 145000, percentage: 65 },
-            { name: 'Apollo Multispeciality', cost: 210000, percentage: 90 },
-            { name: 'City General Hospital', cost: 120000, percentage: 50 }
-        ];
+        // ── Treatment cost data from Excel dataset (medsentinel_25_hospitals_dataset.xlsx) ──
+        const treatmentCosts = {
+            'General consultation':  { low: 94,    high: 2000,   source: 'NHSCD Unit Costs' },
+            'Inpatient admission':   { low: 300,   high: 7000,   source: 'NHSCD Unit Costs' },
+            'Diabetes treatment':    { low: 25000, high: 60000,  source: 'Indian Patient Dataset' },
+            'General surgery':       { low: 45000, high: 150000, source: 'Indian Patient Dataset' },
+            'Cardiology treatment':  { low: 50000, high: 200000, source: 'Indian Patient Dataset' },
+            'Knee Replacement':      { low: 80000, high: 500000, source: 'Indian Patient Dataset' },
+            'Hip Replacement':       { low: 100000,high: 600000, source: 'Indian Patient Dataset' },
+            'Normal Delivery':       { low: 5000,  high: 100000, source: 'Indian Patient Dataset' },
+            'C-Section':             { low: 10000, high: 200000, source: 'Indian Patient Dataset' },
+            'Dialysis':              { low: 1000,  high: 5000,   source: 'Indian Patient Dataset' },
+            'Chemotherapy':          { low: 15000, high: 150000, source: 'Indian Patient Dataset' }
+        };
 
-        document.getElementById('costChart').innerHTML = hospitals.map(h => `
-            <div class="space-y-2">
-                <div class="flex justify-between text-sm font-medium">
+        let allHospitals = [];
+        let selectedHospitals = [];
+
+        // Load hospitals from API
+        async function loadHospitals() {
+            try {
+                const res = await fetch('/api/hospitals?limit=50');
+                allHospitals = await res.json();
+            } catch (e) { console.error(e); }
+        }
+
+        // Search dropdown
+        document.getElementById('hospitalSearch').addEventListener('input', function () {
+            const q = this.value.toLowerCase().trim();
+            const dropdown = document.getElementById('searchDropdown');
+            if (!q) { dropdown.classList.add('hidden'); return; }
+
+            const matches = allHospitals.filter(h =>
+                h.name.toLowerCase().includes(q) || h.location.toLowerCase().includes(q)
+            ).slice(0, 8);
+
+            if (!matches.length) { dropdown.classList.add('hidden'); return; }
+
+            dropdown.innerHTML = matches.map(h => `
+                <div onclick="addHospital(${h.id})"
+                    class="px-4 py-3 hover:bg-white/10 cursor-pointer border-b border-white/5 last:border-0 transition-all">
+                    <div class="font-semibold text-white text-sm">${h.name}</div>
+                    <div class="text-xs text-gray-400">${h.location} &bull; ${h.specialization.split(',')[0].trim()}</div>
+                </div>`).join('');
+            dropdown.classList.remove('hidden');
+        });
+
+        // Close dropdown on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#hospitalSearch') && !e.target.closest('#searchDropdown')) {
+                document.getElementById('searchDropdown').classList.add('hidden');
+            }
+        });
+
+        function addHospital(id) {
+            if (selectedHospitals.length >= 4) {
+                alert('You can compare up to 4 hospitals at a time.');
+                return;
+            }
+            const h = allHospitals.find(h => h.id === id);
+            if (!h || selectedHospitals.find(s => s.id === id)) return;
+            selectedHospitals.push(h);
+            document.getElementById('hospitalSearch').value = '';
+            document.getElementById('searchDropdown').classList.add('hidden');
+            renderChips();
+        }
+
+        function removeHospital(id) {
+            selectedHospitals = selectedHospitals.filter(h => h.id !== id);
+            renderChips();
+        }
+
+        function renderChips() {
+            const container = document.getElementById('selectedChips');
+            if (!selectedHospitals.length) {
+                container.innerHTML = '<p class="text-sm text-gray-500 italic">No hospitals selected yet. Search above to add.</p>';
+                return;
+            }
+            const colors = ['from-blue-500 to-cyan-500', 'from-purple-500 to-pink-500', 'from-green-500 to-emerald-500', 'from-orange-500 to-amber-500'];
+            container.innerHTML = selectedHospitals.map((h, i) => `
+                <div class="hospital-chip flex items-center gap-2 px-4 py-2 bg-gradient-to-r ${colors[i]} rounded-xl text-white text-sm font-semibold shadow-lg">
+                    <span class="material-symbols-rounded text-base">local_hospital</span>
                     <span>${h.name}</span>
-                    <span class="text-blue-400 font-bold">₹${h.cost.toLocaleString()}</span>
+                    <button onclick="removeHospital(${h.id})" class="ml-1 hover:text-red-200 transition-colors">
+                        <span class="material-symbols-rounded text-base">close</span>
+                    </button>
+                </div>`).join('');
+        }
+
+        // ── Per-hospital pricing model ──
+        // Each hospital gets a unique multiplier based on:
+        // 1. Hospital tier (govt vs private)
+        // 2. Rating (higher rating = higher cost)
+        // 3. Hospital brand/name (known premium hospitals cost more)
+        // 4. Location (metro vs non-metro)
+        // 5. Specialization match (specialist hospitals charge more for their specialty)
+
+        const GOVT_HOSPITALS = ['general hospital','district hospital','victoria','bowring','vani vilas',
+            'jayanagar','rajiv gandhi','yelahanka','indira gandhi','kims hubli civil','wenlock','kr hospital'];
+
+        const PREMIUM_HOSPITALS = ['apollo','manipal','fortis','aster','sakra','narayana','bgS gleneagles'];
+
+        const METRO_LOCATIONS = ['bengaluru','bangalore','mysuru','mangaluru','hubli'];
+
+        function getHospitalMultiplier(hospital, treatmentKey) {
+            const name = hospital.name.toLowerCase();
+            const loc  = hospital.location.toLowerCase();
+            const spec = (hospital.specialization || '').toLowerCase();
+
+            // Base: is it government?
+            const isGovt = GOVT_HOSPITALS.some(g => name.includes(g));
+
+            // Is it a premium brand?
+            const isPremium = PREMIUM_HOSPITALS.some(p => name.includes(p));
+
+            // Is it in a metro city?
+            const isMetro = METRO_LOCATIONS.some(m => loc.includes(m));
+
+            // Does it specialize in this treatment?
+            const treatmentSpecMap = {
+                'Cardiology treatment': ['cardiology','cardiac','heart'],
+                'General surgery':      ['general surgery','surgery'],
+                'Diabetes treatment':   ['general medicine','endocrinology'],
+                'Knee Replacement':     ['orthopedics','ortho'],
+                'Hip Replacement':      ['orthopedics','ortho'],
+                'Normal Delivery':      ['obstetrics','gynecology','maternity'],
+                'C-Section':            ['obstetrics','gynecology','maternity'],
+                'Dialysis':             ['nephrology','dialysis'],
+                'Chemotherapy':         ['oncology','cancer'],
+                'General consultation': ['general medicine'],
+                'Inpatient admission':  ['general medicine','multispecialty']
+            };
+            const keywords = treatmentSpecMap[treatmentKey] || [];
+            const isSpecialist = keywords.some(k => spec.includes(k));
+
+            // Rating factor: 3.5→0.85x, 4.0→1.0x, 4.5→1.15x, 4.9→1.3x
+            const rating = parseFloat(hospital.rating) || 4.0;
+            const ratingFactor = 0.5 + (rating / 4.0) * 0.6;
+
+            // Build multiplier
+            let multiplier;
+            if (isGovt) {
+                multiplier = 0.25 + (rating - 3.5) * 0.05; // 0.25 – 0.45
+            } else if (isPremium) {
+                multiplier = 1.4 + (rating - 4.0) * 0.3;   // 1.4 – 1.97
+            } else {
+                multiplier = 0.7 + (rating - 3.8) * 0.25;  // 0.7 – 1.1
+            }
+
+            if (isMetro && !isGovt)   multiplier *= 1.12;
+            if (isSpecialist)          multiplier *= 1.08;
+            if (!isMetro && !isGovt)   multiplier *= 0.88;
+
+            return Math.max(0.2, multiplier);
+        }
+
+        function estimateCost(hospital, treatmentKey) {
+            const base = treatmentCosts[treatmentKey];
+            if (!base) return { low: 0, high: 0, mid: 0 };
+
+            const m = getHospitalMultiplier(hospital, treatmentKey);
+
+            // Add a small deterministic jitter per hospital so even same-tier hospitals differ
+            const jitter = ((hospital.id * 17 + hospital.name.length * 7) % 15) / 100; // 0–0.14
+            const mLow  = Math.max(0.15, m - 0.05 + jitter * 0.5);
+            const mHigh = m + 0.08 + jitter;
+
+            const low  = Math.round(base.low  * mLow);
+            const high = Math.round(base.high * mHigh);
+            const mid  = Math.round((low + high) / 2);
+            return { low, high, mid };
+        }
+
+        function fmt(n) { return '₹' + n.toLocaleString('en-IN'); }
+
+        function runComparison() {
+            const treatment = document.getElementById('treatmentSelect').value;
+            if (!treatment) { alert('Please select a treatment.'); return; }
+            if (selectedHospitals.length < 2) { alert('Please select at least 2 hospitals to compare.'); return; }
+
+            document.getElementById('resultsSection').classList.remove('hidden');
+            document.getElementById('chartTreatmentLabel').textContent = treatment;
+
+            const costs = selectedHospitals.map(h => ({ ...h, cost: estimateCost(h, treatment) }));
+            const maxMid = Math.max(...costs.map(c => c.cost.mid));
+            const minIdx = costs.reduce((mi, c, i) => c.cost.mid < costs[mi].cost.mid ? i : mi, 0);
+
+            const barColors = ['from-blue-500 to-cyan-500', 'from-purple-500 to-pink-500', 'from-green-500 to-emerald-500', 'from-orange-500 to-amber-500'];
+
+            // ── Bar Chart ──
+            document.getElementById('costBars').innerHTML = costs.map((c, i) => {
+                const pct = maxMid > 0 ? Math.round((c.cost.mid / maxMid) * 100) : 0;
+                const isBest = i === minIdx;
+                return `
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-semibold text-white">${c.name}</span>
+                            ${isBest ? '<span class="text-xs bg-green-500/20 text-green-400 border border-green-500/30 px-2 py-0.5 rounded-lg font-bold">Best Value</span>' : ''}
+                        </div>
+                        <span class="text-sm font-bold text-blue-400">${fmt(c.cost.low)} – ${fmt(c.cost.high)}</span>
+                    </div>
+                    <div class="w-full h-4 bg-white/10 rounded-full overflow-hidden">
+                        <div class="bar-fill h-full rounded-full bg-gradient-to-r ${isBest ? 'from-green-500 to-emerald-400' : barColors[i]}" style="width:${pct}%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">${c.location}</div>
+                </div>`;
+            }).join('');
+
+            // ── Best Value Card ──
+            const best = costs[minIdx];
+            const worst = costs.reduce((wi, c, i) => c.cost.mid > costs[wi].cost.mid ? i : wi, 0);
+            const savings = costs[worst].cost.mid - best.cost.mid;
+            document.getElementById('bestValueCard').innerHTML = `
+                <div class="md:col-span-2 bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-xl p-6 rounded-2xl border border-green-500/30">
+                    <span class="bg-green-500/90 text-white text-xs font-bold px-2 py-1 rounded-lg uppercase">Best Value</span>
+                    <h4 class="text-2xl font-bold mt-3 text-white">${best.name}</h4>
+                    <p class="text-sm text-gray-300 mt-1">${best.location}</p>
+                    <div class="flex flex-wrap gap-6 mt-4">
+                        <div>
+                            <p class="text-xs font-bold uppercase text-gray-400">Estimated Cost</p>
+                            <p class="text-green-400 text-2xl font-black">${fmt(best.cost.low)} – ${fmt(best.cost.high)}</p>
+                        </div>
+                        ${savings > 0 ? `<div>
+                            <p class="text-xs font-bold uppercase text-gray-400">You Save vs Costliest</p>
+                            <p class="text-yellow-400 text-2xl font-black">${fmt(savings)}</p>
+                        </div>` : ''}
+                    </div>
                 </div>
-                <div class="w-full h-3 bg-white/10 rounded-full overflow-hidden">
-                    <div class="h-full ${h.percentage === 50 ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-blue-500 to-purple-500'}" style="width: ${h.percentage}%;"></div>
-                </div>
-            </div>
-        `).join('');
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-6 rounded-2xl border border-white/10">
+                    <h4 class="font-bold text-white mb-3 flex items-center gap-2">
+                        <span class="material-symbols-rounded text-blue-400">info</span> Data Source
+                    </h4>
+                    <p class="text-xs text-gray-400 leading-relaxed">Cost estimates based on <span class="text-white font-semibold">medsentinel_25_hospitals_dataset.xlsx</span> and NHSCD Unit Costs database. Actual costs may vary.</p>
+                    <p class="text-xs text-gray-500 mt-2">Treatment: <span class="text-white">${treatment}</span></p>
+                </div>`;
+
+            // ── Comparison Table ──
+            const thead = `<thead><tr class="bg-white/5 border-b border-white/10">
+                <th class="p-5 font-bold text-gray-400 text-sm">Metric</th>
+                ${costs.map((c, i) => `<th class="p-5 font-bold text-sm ${i === minIdx ? 'bg-green-500/10 text-green-400' : 'text-white'}">${c.name}</th>`).join('')}
+            </tr></thead>`;
+
+            const rows = [
+                {
+                    label: 'Estimated Cost Range',
+                    icon: 'payments',
+                    render: (c, i) => `<div class="font-bold text-lg ${i === minIdx ? 'text-green-400' : 'text-white'}">${fmt(c.cost.low)} – ${fmt(c.cost.high)}</div>
+                        ${i === minIdx ? '<div class="text-xs text-green-400 font-semibold mt-0.5">&#10003; Lowest Cost</div>' : ''}`
+                },
+                {
+                    label: 'Avg Estimated Cost',
+                    icon: 'calculate',
+                    render: (c, i) => {
+                        const maxC = Math.max(...costs.map(x => x.cost.mid));
+                        const pct  = maxC > 0 ? Math.round((c.cost.mid / maxC) * 100) : 0;
+                        return `<div class="font-bold text-white mb-1">${fmt(c.cost.mid)}</div>
+                            <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full ${i === minIdx ? 'bg-green-500' : 'bg-blue-500'}" style="width:${pct}%"></div>
+                            </div>`;
+                    }
+                },
+                {
+                    label: 'vs Cheapest',
+                    icon: 'trending_up',
+                    render: (c, i) => {
+                        const cheapest = costs[minIdx].cost.mid;
+                        const diff = c.cost.mid - cheapest;
+                        if (i === minIdx) return '<span class="text-green-400 font-bold text-sm">&#9733; Best Price</span>';
+                        return `<span class="text-red-400 font-bold text-sm">+${fmt(diff)} more</span>`;
+                    }
+                },
+                {
+                    label: 'Rating',
+                    icon: 'star',
+                    render: (c) => `<div class="flex items-center gap-1">
+                        <span class="material-symbols-rounded text-yellow-400 text-sm">star</span>
+                        <span class="font-bold text-white">${parseFloat(c.rating).toFixed(1)}</span>
+                        <span class="text-xs text-gray-400">/5</span>
+                    </div>`
+                },
+                {
+                    label: 'Hospital Type',
+                    icon: 'domain',
+                    render: (c) => {
+                        const isGovt = GOVT_HOSPITALS.some(g => c.name.toLowerCase().includes(g));
+                        return isGovt
+                            ? '<span class="text-xs bg-green-500/20 text-green-400 border border-green-500/30 px-2 py-1 rounded-lg font-bold">Government</span>'
+                            : '<span class="text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-1 rounded-lg font-bold">Private</span>';
+                    }
+                },
+                {
+                    label: 'Location',
+                    icon: 'location_on',
+                    render: (c) => `<div class="text-sm text-gray-300">${c.location}</div>`
+                },
+                {
+                    label: 'Specializations',
+                    icon: 'medical_services',
+                    render: (c) => `<div class="flex flex-wrap gap-1">${c.specialization.split(',').slice(0,3).map(s =>
+                        '<span class="text-xs bg-purple-500/20 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-lg">' + s.trim() + '</span>').join('')}</div>`
+                },
+                {
+                    label: 'Govt Schemes',
+                    icon: 'account_balance',
+                    render: (c) => `<div class="flex flex-wrap gap-1">${c.schemes.split(',').map(s =>
+                        '<span class="text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-lg">' + s.trim() + '</span>').join('')}</div>`
+                },
+                {
+                    label: 'Facilities',
+                    icon: 'local_hospital',
+                    render: (c) => `<div class="text-xs text-gray-300">${c.facilities || 'N/A'}</div>`
+                },
+                {
+                    label: 'Action',
+                    icon: '',
+                    render: (c, i) => '<a href="/hospital-details.html?id=' + c.id + '"'
+                        + ' class="inline-block px-4 py-2 rounded-xl text-white text-xs font-bold transition-all '
+                        + (i === minIdx ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:shadow-lg hover:shadow-green-500/40' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg hover:shadow-blue-500/40')
+                        + '">View Details →</a>'
+                }
+            ];
+
+            const tbody = '<tbody class="divide-y divide-white/10">' +
+                rows.map(row => `<tr>
+                    <td class="p-5 font-semibold text-sm text-gray-300 flex items-center gap-2 whitespace-nowrap">
+                        ${row.icon ? `<span class="material-symbols-rounded text-base text-gray-500">${row.icon}</span>` : ''}
+                        ${row.label}
+                    </td>
+                    ${costs.map((c, i) => `<td class="p-5 ${i === minIdx ? 'bg-green-500/5' : ''}">${row.render(c, i)}</td>`).join('')}
+                </tr>`).join('') + '</tbody>';
+
+            document.getElementById('comparisonTable').innerHTML = thead + tbody;
+
+            // ── Smart Tip ──
+            const saving = savings > 0 ? `Choosing <strong>${best.name}</strong> over <strong>${costs[worst].name}</strong> saves you approximately <strong>${fmt(savings)}</strong> for ${treatment}.` :
+                `All selected hospitals have similar estimated costs for ${treatment}. Consider rating and scheme coverage when deciding.`;
+            document.getElementById('smartTipText').innerHTML = saving + ` Always confirm final pricing directly with the hospital.`;
+
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        loadHospitals();
     </script>
 </body>
 </html>

@@ -173,6 +173,14 @@
     <script>
         let searchData = { urgency: '' };
 
+        // ── Pre-fill from URL params (coming from homepage search bar) ──
+        const urlParams = new URLSearchParams(window.location.search);
+        const preCondition = urlParams.get('condition');
+        if (preCondition) {
+            document.getElementById('condition').value = preCondition;
+            searchData.condition = preCondition;
+        }
+
         function selectUrgency(type) {
             searchData.urgency = type;
             document.querySelectorAll('.urgency-btn').forEach(btn => {
@@ -185,17 +193,14 @@
         }
 
         function goToStep2() {
-            const condition = document.getElementById('condition').value;
-            const location = document.getElementById('location').value;
-            
-            if(!condition || !location) {
+            const condition = document.getElementById('condition').value.trim();
+            const location = document.getElementById('location').value.trim();
+            if (!condition || !location) {
                 alert('Please fill in medical condition and location');
                 return;
             }
-
             searchData.condition = condition;
             searchData.location = location;
-
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
             document.getElementById('step1-indicator').classList.remove('step-active');
@@ -216,16 +221,22 @@
         }
 
         function processSearch() {
-            searchData.fullName = document.getElementById('fullName').value;
-            searchData.age = document.getElementById('age').value;
-            searchData.gender = document.getElementById('gender').value;
-            searchData.income = document.getElementById('income').value;
-            searchData.state = document.getElementById('state').value;
+            const fullName = document.getElementById('fullName').value.trim();
+            const age      = document.getElementById('age').value.trim();
+            const gender   = document.getElementById('gender').value;
+            const income   = document.getElementById('income').value;
+            const state    = document.getElementById('state').value.trim();
 
-            if(!searchData.fullName || !searchData.age || !searchData.gender || !searchData.income) {
+            if (!fullName || !age || !gender || !income) {
                 alert('Please fill in all required fields');
                 return;
             }
+
+            searchData.fullName = fullName;
+            searchData.age      = age;
+            searchData.gender   = gender;
+            searchData.income   = income;
+            searchData.state    = state;
 
             document.getElementById('step2').classList.add('hidden');
             document.getElementById('step3').classList.remove('hidden');
@@ -235,10 +246,21 @@
             document.getElementById('step3-indicator').classList.add('step-active');
             window.scrollTo(0, 0);
 
-            // Simulate AI processing
+            // Build URL with ALL user data so hospitals page can use it
+            const params = new URLSearchParams({
+                search:   searchData.condition,
+                location: searchData.location  || '',
+                urgency:  searchData.urgency   || '',
+                name:     searchData.fullName,
+                age:      searchData.age,
+                gender:   searchData.gender,
+                income:   searchData.income,
+                state:    searchData.state     || ''
+            });
+
             setTimeout(() => {
-                window.location.href = '/hospitals.html?search=' + encodeURIComponent(searchData.condition);
-            }, 3000);
+                window.location.href = '/hospitals.html?' + params.toString();
+            }, 2500);
         }
     </script>
 </body>

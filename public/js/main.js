@@ -1,17 +1,23 @@
 // Main JavaScript for MedSentinel
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = window.location.origin + '/api';
 
 // Search functionality
+function goToSearchFlow() {
+    const query = document.getElementById('searchInput').value.trim();
+    const url = query ? '/search-flow.html?condition=' + encodeURIComponent(query) : '/search-flow.html';
+    window.location.href = url;
+}
+
 async function searchHospitals() {
     const query = document.getElementById('searchInput').value;
     if (query) {
-        window.location.href = `/hospitals.html?search=${encodeURIComponent(query)}`;
+        window.location.href = '/hospitals.html?search=' + encodeURIComponent(query);
     }
 }
 
 function quickSearch(category) {
-    window.location.href = `/hospitals.html?search=${encodeURIComponent(category)}`;
+    window.location.href = '/search-flow.html?condition=' + encodeURIComponent(category);
 }
 
 // Location functionality

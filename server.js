@@ -9,11 +9,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
+
+// Ensure the app can be run with a default single-origin API base path
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) return next();
+  return next();
+});
 
 const db = new sqlite3.Database('./medsentinel.db', (err) => {
   if (err) console.error(err);
@@ -62,13 +68,44 @@ db.serialize(() => {
     saved_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
-  // Insert sample data
+  // Only seed if DB is empty (prevents duplicates on restart)
+  db.get('SELECT COUNT(*) as count FROM hospitals', (err, row) => {
+    if (err || row.count > 0) return;
+  // Insert sample data - Real Karnataka Hospitals from PM-JAY and Aarogya Karnataka
   const hospitals = [
-    ['Apollo Multispeciality', 'Navi Mumbai', 'Multispecialty', 4.8, 2.4, '₹85,000', 'Ayushman Bharat,ESI', 'hospital1.jpg', '24/7 ER,ICU,Pharmacy'],
-    ['Fortis Healthcare', 'Mulund West', 'Cardiology', 4.6, 5.1, '₹92,400', 'CGHS,PMJAY', 'hospital2.jpg', '24/7 ER,Cardiac Lab'],
-    ['Max Super Speciality', 'South Delhi', 'Multispecialty', 4.8, 1.2, '₹145,000', 'Ayushman Bharat,CGHS', 'hospital3.jpg', '24/7 ER,ICU,Diagnostics'],
-    ['Manipal Hospitals', 'Whitefield', 'Cardiology', 4.9, 5.1, '₹182,000', 'PMJAY,CGHS', 'hospital4.jpg', 'Cardiac Care,ICU'],
-    ['Narayana Health', 'Hosur Road', 'Cardiac', 4.7, 12, '₹115,000', 'Ayushman Bharat,NABH', 'hospital5.jpg', 'Cardiac Surgery,ICU']
+    // Bengaluru Government Hospitals
+    ['KC General Hospital', 'Malleshwaram, Bengaluru', 'General Surgery, ENT, Orthopedics', 4.2, 3.5, '₹15,000 - ₹45,000', 'Ayushman Bharat,Aarogya Karnataka,PMJAY', 'hospital1.jpg', '24/7 ER,ICU,General Ward,OPD'],
+    ['Yelahanka General Hospital', 'Yelahanka, Bengaluru', 'General Medicine, Pediatrics', 4.0, 8.2, '₹10,000 - ₹35,000', 'Ayushman Bharat,Aarogya Karnataka', 'hospital2.jpg', '24/7 ER,Pharmacy,Lab'],
+    ['Victoria Hospital', 'Fort, Bengaluru', 'Multispecialty, Trauma Care', 4.3, 2.1, '₹12,000 - ₹50,000', 'Ayushman Bharat,PMJAY,ESI', 'hospital3.jpg', '24/7 ER,ICU,Trauma Center,Blood Bank'],
+    ['Bowring and Lady Curzon Hospital', 'Shivaji Nagar, Bengaluru', 'Obstetrics, Gynecology, Pediatrics', 4.1, 3.8, '₹8,000 - ₹30,000', 'Ayushman Bharat,Aarogya Karnataka', 'hospital4.jpg', 'Maternity Ward,NICU,OPD'],
+    ['Vani Vilas Hospital', 'KR Market, Bengaluru', 'General Surgery, Orthopedics', 3.9, 4.2, '₹10,000 - ₹40,000', 'Ayushman Bharat,PMJAY', 'hospital5.jpg', '24/7 ER,General Ward,OT'],
+    
+    // Bengaluru Private Empanelled Hospitals
+    ['Manipal Hospital', 'HAL Airport Road, Bengaluru', 'Cardiology, Neurology, Oncology', 4.8, 6.5, '₹50,000 - ₹2,50,000', 'Ayushman Bharat,PMJAY,CGHS,ESI', 'hospital6.jpg', '24/7 ER,ICU,Cath Lab,Advanced Diagnostics'],
+    ['Narayana Health City', 'Bommasandra, Bengaluru', 'Cardiac Surgery, Multispecialty', 4.7, 15.3, '₹40,000 - ₹2,00,000', 'Ayushman Bharat,PMJAY,Aarogya Karnataka', 'hospital7.jpg', 'Cardiac Care,ICU,Dialysis,Transplant'],
+    ['Apollo Hospital', 'Bannerghatta Road, Bengaluru', 'Multispecialty, Oncology', 4.9, 9.8, '₹60,000 - ₹3,00,000', 'Ayushman Bharat,CGHS,ESI', 'hospital8.jpg', '24/7 ER,ICU,Cancer Center,Robotic Surgery'],
+    ['Fortis Hospital', 'Bannerghatta Road, Bengaluru', 'Orthopedics, Neurosurgery', 4.6, 10.2, '₹55,000 - ₹2,80,000', 'Ayushman Bharat,PMJAY,CGHS', 'hospital9.jpg', '24/7 ER,Neuro ICU,Joint Replacement'],
+    ['Columbia Asia Hospital', 'Whitefield, Bengaluru', 'General Surgery, Pediatrics', 4.5, 12.7, '₹35,000 - ₹1,50,000', 'Ayushman Bharat,ESI', 'hospital10.jpg', '24/7 ER,ICU,Pediatric Ward'],
+    
+    // Uttara Kannada District
+    ['24X7 Hi-Tech Lifeline Hospital', 'Karwar, Uttara Kannada', 'Emergency Care, General Medicine', 4.1, 485.0, '₹15,000 - ₹60,000', 'Ayushman Bharat,PMJAY', 'hospital11.jpg', '24/7 ER,ICU,Ambulance'],
+    ['District Hospital Karwar', 'Karwar, Uttara Kannada', 'General Surgery, Obstetrics', 3.8, 487.0, '₹10,000 - ₹35,000', 'Ayushman Bharat,Aarogya Karnataka', 'hospital12.jpg', '24/7 ER,Maternity,OPD'],
+    
+    // Mysuru District
+    ['JSS Hospital', 'Mysuru', 'Multispecialty, Cardiology', 4.6, 145.0, '₹30,000 - ₹1,20,000', 'Ayushman Bharat,PMJAY,ESI', 'hospital13.jpg', '24/7 ER,ICU,Cardiac Care'],
+    ['Apollo BGS Hospital', 'Mysuru', 'Oncology, Neurology', 4.7, 147.0, '₹45,000 - ₹2,00,000', 'Ayushman Bharat,CGHS', 'hospital14.jpg', 'Cancer Center,Neuro ICU,Diagnostics'],
+    
+    // Mangaluru District
+    ['KMC Hospital', 'Mangaluru', 'Multispecialty, Nephrology', 4.5, 352.0, '₹35,000 - ₹1,80,000', 'Ayushman Bharat,PMJAY,ESI', 'hospital15.jpg', '24/7 ER,Dialysis,ICU'],
+    ['AJ Hospital', 'Mangaluru', 'Orthopedics, General Surgery', 4.4, 355.0, '₹25,000 - ₹1,00,000', 'Ayushman Bharat,Aarogya Karnataka', 'hospital16.jpg', '24/7 ER,OT,Physiotherapy'],
+    
+    // Hubli-Dharwad
+    ['KIMS Hospital', 'Hubli', 'Cardiology, Neurosurgery', 4.6, 410.0, '₹40,000 - ₹1,90,000', 'Ayushman Bharat,PMJAY,CGHS', 'hospital17.jpg', 'Cardiac Cath Lab,Neuro ICU,24/7 ER'],
+    ['SDM Hospital', 'Dharwad', 'General Medicine, Pediatrics', 4.3, 420.0, '₹20,000 - ₹80,000', 'Ayushman Bharat,ESI', 'hospital18.jpg', '24/7 ER,Pediatric ICU,OPD'],
+    
+    // Belgaum District
+    ['KLE Hospital', 'Belgaum', 'Multispecialty, Oncology', 4.5, 502.0, '₹35,000 - ₹1,60,000', 'Ayushman Bharat,PMJAY', 'hospital19.jpg', 'Cancer Center,ICU,24/7 ER'],
+    ['District Hospital Belgaum', 'Belgaum', 'General Surgery, Obstetrics', 3.9, 505.0, '₹12,000 - ₹45,000', 'Ayushman Bharat,Aarogya Karnataka', 'hospital20.jpg', 'Maternity Ward,OT,OPD']
   ];
 
   const stmt = db.prepare('INSERT OR IGNORE INTO hospitals (name, location, specialization, rating, distance, cost_range, schemes, image_url, facilities) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
@@ -85,6 +122,7 @@ db.serialize(() => {
   const schemeStmt = db.prepare('INSERT OR IGNORE INTO schemes (name, description, coverage, eligibility, type) VALUES (?, ?, ?, ?, ?)');
   schemes.forEach(s => schemeStmt.run(s));
   schemeStmt.finalize();
+  }); // end count check
 });
 
 // API Routes
@@ -113,6 +151,8 @@ app.get('/api/hospitals', (req, res) => {
     query += ' AND schemes LIKE ?';
     params.push(`%${scheme}%`);
   }
+
+  query += ' LIMIT 20';
 
   db.all(query, params, (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -196,6 +236,25 @@ app.post('/api/eligibility-check', (req, res) => {
   res.json({ eligible });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+const server = app.listen(PORT, () => {
+  console.log(`✅ Server running on http://localhost:${PORT}`);
+});
+
+server.on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+    console.error(`⚠️ Port ${PORT} is already in use.`);
+    const fallbackPort = PORT === 3000 ? 3001 : 3000;
+    console.log(`➡️ Attempting to listen on fallback port ${fallbackPort}...`);
+
+    app.listen(fallbackPort, () => {
+      console.log(`✅ Server running on http://localhost:${fallbackPort}`);
+    }).on('error', (err2) => {
+      console.error(`❌ Fallback port ${fallbackPort} also failed:`, err2.message);
+      process.exit(1);
+    });
+
+  } else {
+    console.error('Server error:', error);
+    process.exit(1);
+  }
 });
