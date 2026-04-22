@@ -1,2 +1,4 @@
-✅ Server running on http://localhost:3000
+⚠️ Port 3000 is already in use.
+➡️ Attempting to listen on fallback port 3001...
+✅ Server running on http://localhost:3001
 Database connected

@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,15 +14,11 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Ensure the app can be run with a default single-origin API base path
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api/')) return next();
-  return next();
-});
-
-const db = new sqlite3.Database('./medsentinel.db', (err) => {
+// Database setup - use /tmp for Vercel or current directory for local
+const dbPath = process.env.VERCEL ? '/tmp/medsentinel.db' : './medsentinel.db';
+const db = new sqlite3.Database(dbPath, (err) => {
   if (err) console.error(err);
   else console.log('Database connected');
 });
@@ -225,15 +222,22 @@ app.delete('/api/saved-items/:userId/:hospitalId', (req, res) => {
 app.post('/api/eligibility-check', (req, res) => {
   const { familySize, location, income, conditions } = req.body;
   const eligible = [];
-  
+
   if (income === 'low') {
     eligible.push({ scheme: 'Ayushman Bharat', probability: 94 });
   }
   if (location === 'urban' || location === 'rural') {
     eligible.push({ scheme: 'State Health Scheme', probability: 78 });
   }
-  
+
   res.json({ eligible });
+});
+
+// Serve index.html for any non-API routes (SPA fallback)
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api/')) {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  }
 });
 
 const server = app.listen(PORT, () => {

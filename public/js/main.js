@@ -38,42 +38,9 @@ function showLocation() {
 
 // Chat functionality
 function openChat() {
-    const chatWindow = window.open('', 'MedSentinel Chat', 'width=400,height=600');
-    chatWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>MedSentinel AI Chat</title>
-            <script src="https://cdn.tailwindcss.com"></script>
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-        </head>
-        <body class="bg-gray-50 font-['Inter']">
-            <div class="h-screen flex flex-col">
-                <div class="bg-blue-700 text-white p-4">
-                    <h2 class="text-xl font-bold">MedSentinel AI Assistant</h2>
-                    <p class="text-sm opacity-90">How can I help you today?</p>
-                </div>
-                <div class="flex-1 p-4 overflow-y-auto space-y-4">
-                    <div class="bg-white p-4 rounded-lg shadow-sm">
-                        <p class="text-sm">Hello! I can help you with:</p>
-                        <ul class="mt-2 text-sm space-y-1">
-                            <li>• Finding hospitals near you</li>
-                            <li>• Checking scheme eligibility</li>
-                            <li>• Comparing treatment costs</li>
-                            <li>• Booking consultations</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="p-4 border-t">
-                    <div class="flex gap-2">
-                        <input type="text" placeholder="Type your message..." class="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                        <button class="bg-blue-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-800">Send</button>
-                    </div>
-                </div>
-            </div>
-        </body>
-        </html>
-    `);
+    const w = window.open('/chat.html', 'MedSentinelChat',
+        'width=420,height=650,resizable=no,scrollbars=no,toolbar=no,menubar=no,location=no,status=no');
+    if (w) w.focus();
 }
 
 // Load schemes on homepage

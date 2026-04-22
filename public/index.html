@@ -73,23 +73,19 @@
             <div class="hidden lg:block">
                 <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl">
                     <div class="grid grid-cols-2 gap-6">
-                        <!-- Stat Card 1 -->
-                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                        <div onclick="window.location.href='/hospitals.html'" class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer">
                             <div class="text-4xl font-black text-blue-600 mb-2">10K+</div>
                             <div class="text-sm text-gray-600 font-semibold">Verified Hospitals</div>
                         </div>
-                        <!-- Stat Card 2 -->
-                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                        <div onclick="window.location.href='/comparison.html'" class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer">
                             <div class="text-4xl font-black text-green-600 mb-2">₹45K+</div>
                             <div class="text-sm text-gray-600 font-semibold">Average Savings</div>
                         </div>
-                        <!-- Stat Card 3 -->
-                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                        <div onclick="window.location.href='/eligibility.html'" class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer">
                             <div class="text-4xl font-black text-purple-600 mb-2">1M+</div>
                             <div class="text-sm text-gray-600 font-semibold">Happy Users</div>
                         </div>
-                        <!-- Stat Card 4 -->
-                        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                        <div onclick="openChat()" class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer">
                             <div class="text-4xl font-black text-orange-600 mb-2">24/7</div>
                             <div class="text-sm text-gray-600 font-semibold">Support Available</div>
                         </div>
@@ -243,6 +239,10 @@
                             <span class="material-symbols-outlined text-xs">chevron_right</span>
                             <span>Cost Comparison</span>
                         </a></li>
+                        <li><a href="/eligibility.html" class="hover:text-blue-400 transition-colors flex items-center space-x-2">
+                            <span class="material-symbols-outlined text-xs">chevron_right</span>
+                            <span>Check Eligibility</span>
+                        </a></li>
                     </ul>
                 </div>
                 
@@ -250,10 +250,10 @@
                 <div>
                     <h3 class="font-bold text-white mb-4">Resources</h3>
                     <ul class="space-y-3 text-sm">
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Help Center</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">FAQs</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Blog</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Contact Us</a></li>
+                        <li><a href="/search-flow.html" class="hover:text-blue-400 transition-colors">Help Center</a></li>
+                        <li><a href="/eligibility.html" class="hover:text-blue-400 transition-colors">FAQs</a></li>
+                        <li><a href="/comparison.html" class="hover:text-blue-400 transition-colors">Cost Guide</a></li>
+                        <li><a href="javascript:void(0)" onclick="document.querySelector('button[onclick=openChat()]') && openChat()" class="hover:text-blue-400 transition-colors">Contact Us</a></li>
                     </ul>
                 </div>
                 
@@ -261,10 +261,10 @@
                 <div>
                     <h3 class="font-bold text-white mb-4">Legal</h3>
                     <ul class="space-y-3 text-sm">
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Terms of Service</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Cookie Policy</a></li>
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Disclaimer</a></li>
+                        <li><a href="javascript:void(0)" onclick="showModal('privacy')" class="hover:text-blue-400 transition-colors">Privacy Policy</a></li>
+                        <li><a href="javascript:void(0)" onclick="showModal('terms')" class="hover:text-blue-400 transition-colors">Terms of Service</a></li>
+                        <li><a href="javascript:void(0)" onclick="showModal('cookie')" class="hover:text-blue-400 transition-colors">Cookie Policy</a></li>
+                        <li><a href="javascript:void(0)" onclick="showModal('disclaimer')" class="hover:text-blue-400 transition-colors">Disclaimer</a></li>
                     </ul>
                 </div>
             </div>
@@ -273,13 +273,12 @@
             <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <p class="text-sm text-gray-400">© 2024 MedSentinel. All rights reserved.</p>
                 <div class="flex items-center space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors">
+                    <a href="https://facebook.com" target="_blank" class="text-gray-400 hover:text-blue-400 transition-colors">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                    <a href="https://twitter.com" target="_blank" class="text-gray-400 hover:text-blue-400 transition-colors">a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
                     </a>
-                    <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors">
+                    <a href="https://t.me/medsentinel" target="_blank" class="text-gray-400 hover:text-blue-400 transition-colors">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z"/></svg>
                     </a>
                 </div>
@@ -297,5 +296,37 @@
     </button>
 
     <script src="/js/main.js"></script>
+
+    <!-- Legal Modal -->
+    <div id="legalModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this)closeLegalModal()">
+        <div class="bg-gray-800 rounded-2xl p-8 max-w-lg w-full border border-white/10 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-xl font-bold text-white"></h3>
+                <button onclick="closeLegalModal()" class="text-gray-400 hover:text-white transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <p id="modalBody" class="text-gray-300 text-sm leading-relaxed"></p>
+            <button onclick="closeLegalModal()" class="mt-6 w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition-all">Close</button>
+        </div>
+    </div>
+
+    <script>
+    const legalContent = {
+        privacy: { title: 'Privacy Policy', body: 'MedSentinel collects only the information necessary to help you find affordable healthcare. Your personal data (name, age, income) is used solely for scheme eligibility checks and is never sold to third parties. All data is stored securely and you may request deletion at any time by contacting us.' },
+        terms: { title: 'Terms of Service', body: 'MedSentinel is an informational platform to help patients navigate healthcare options in India. Cost estimates are indicative and may vary. We do not provide medical advice or diagnoses. Always consult a qualified doctor for medical decisions. By using this platform you agree to these terms.' },
+        cookie: { title: 'Cookie Policy', body: 'MedSentinel uses localStorage to save your hospital preferences and applied schemes for a better experience. No third-party tracking cookies are used. You can clear your browser storage at any time to remove all saved data.' },
+        disclaimer: { title: 'Disclaimer', body: 'All hospital cost data on MedSentinel is sourced from public datasets (PM-JAY, NHSCD, Aarogya Karnataka) and is for informational purposes only. Actual costs may vary. Government scheme eligibility is indicative — please verify with official portals (pmjay.gov.in, 14555). MedSentinel is not affiliated with any hospital or government body.' }
+    };
+    function showModal(type) {
+        const c = legalContent[type];
+        document.getElementById('modalTitle').textContent = c.title;
+        document.getElementById('modalBody').textContent = c.body;
+        document.getElementById('legalModal').classList.remove('hidden');
+    }
+    function closeLegalModal() {
+        document.getElementById('legalModal').classList.add('hidden');
+    }
+    </script>
 </body>
 </html>

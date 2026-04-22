@@ -133,14 +133,64 @@
     </div>
 
     <script>
+        // Get hospital details from URL params
+        const params = new URLSearchParams(window.location.search);
+        const hospitalId = params.get('hospitalId');
+        const hospitalName = params.get('hospitalName');
+        const hospitalLocation = params.get('hospitalLocation');
+
+        // Display hospital info in sidebar if available
+        if (hospitalName) {
+            const sidebar = document.querySelector('.space-y-6');
+            const hospitalInfo = document.createElement('div');
+            hospitalInfo.className = 'bg-gradient-to-br from-blue-600/20 to-purple-600/20 backdrop-blur-xl rounded-2xl p-6 border border-blue-500/30';
+            hospitalInfo.innerHTML = `
+                <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <span class="material-symbols-rounded text-blue-400">local_hospital</span>
+                    Selected Hospital
+                </h3>
+                <div class="space-y-2 text-sm text-gray-300">
+                    <div class="font-semibold text-white">${hospitalName}</div>
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-rounded text-sm">location_on</span>
+                        <span>${hospitalLocation || 'Location'}</span>
+                    </div>
+                </div>
+            `;
+            sidebar.insertBefore(hospitalInfo, sidebar.firstChild);
+        }
+
         document.getElementById('bookingForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            
+
+            // Collect form data
+            const inputs = e.target.querySelectorAll('input, select, textarea');
+            const booking = {
+                id: Date.now(),
+                hospitalId: hospitalId || 'N/A',
+                hospitalName: hospitalName || 'Not specified',
+                hospitalLocation: hospitalLocation || 'Not specified',
+                fullName: inputs[0].value,
+                phone: inputs[1].value,
+                email: inputs[2].value,
+                date: inputs[3].value,
+                time: inputs[4].value,
+                department: inputs[5].value,
+                reason: inputs[6].value,
+                status: 'Pending',
+                bookedOn: new Date().toLocaleDateString()
+            };
+
+            // Save to localStorage
+            const bookings = JSON.parse(localStorage.getItem('hospitalBookings') || '[]');
+            bookings.push(booking);
+            localStorage.setItem('hospitalBookings', JSON.stringify(bookings));
+
             const notification = document.createElement('div');
             notification.className = 'fixed top-4 right-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-4 rounded-xl shadow-lg z-50 animate-slideInRight';
             notification.innerHTML = '<div class="flex items-center space-x-2"><span class="material-symbols-rounded">check_circle</span><span>Consultation booked successfully!</span></div>';
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.remove();
                 window.location.href = '/profile.html';

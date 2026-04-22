@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSentinel AI Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        #messages { scroll-behavior: smooth; }
+
+        .msg-bot  { animation: fadeInLeft  0.35s ease; }
+        .msg-user { animation: fadeInRight 0.35s ease; }
+        @keyframes fadeInLeft  { from { opacity:0; transform:translateX(-12px); } to { opacity:1; transform:translateX(0); } }
+        @keyframes fadeInRight { from { opacity:0; transform:translateX(12px);  } to { opacity:1; transform:translateX(0); } }
+
+        /* Typing dots */
+        .typing span {
+            display: inline-block; width:7px; height:7px;
+            background:#60a5fa; border-radius:50%;
+            animation: tdot 1.2s infinite;
+        }
+        .typing span:nth-child(2) { animation-delay:.2s; }
+        .typing span:nth-child(3) { animation-delay:.4s; }
+        @keyframes tdot { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-7px)} }
+
+        /* Suggestion chips */
+        .chip { transition: all .18s; cursor:pointer; }
+        .chip:hover { transform:translateY(-2px); }
+
+        /* Quick action buttons */
+        .qbtn { transition: all .18s; }
+        .qbtn:hover { transform:translateY(-1px); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-thumb { background:#374151; border-radius:4px; }
+
+        /* Link style inside bot messages */
+        .bot-link {
+            color:#60a5fa; text-decoration:underline; cursor:pointer;
+            font-weight:600;
+        }
+        .bot-link:hover { color:#93c5fd; }
+
+        /* Info card inside bot message */
+        .info-card {
+            background: rgba(59,130,246,0.12);
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white h-screen flex flex-col overflow-hidden">
+
+    <!-- ── Header ── -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-700 px-4 py-3 flex items-center justify-between flex-shrink-0 shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shadow">
+                <span class="material-symbols-rounded text-white text-xl">health_and_safety</span>
+            </div>
+            <div>
+                <div class="font-bold text-sm leading-tight">MedSentinel AI</div>
+                <div class="flex items-center gap-1.5 text-xs text-blue-100 mt-0.5">
+                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse inline-block"></span>
+                    Online · Gemini AI
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="clearChat()" title="Clear chat" class="text-white/60 hover:text-white transition-colors p-1.5 hover:bg-white/10 rounded-lg">
+                <span class="material-symbols-rounded text-lg">refresh</span>
+            </button>
+            <button onclick="window.close()" class="text-white/60 hover:text-white transition-colors p-1.5 hover:bg-white/10 rounded-lg">
+                <span class="material-symbols-rounded text-lg">close</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Messages ── -->
+    <div id="messages" class="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-gray-900"></div>
+
+    <!-- ── Quick Actions ── -->
+    <div class="px-4 py-2 flex gap-2 overflow-x-auto flex-shrink-0 bg-gray-900 border-t border-white/5">
+        <button onclick="sendQuick('How do I find affordable hospitals near me?')"        class="qbtn flex-shrink-0 px-3 py-1.5 bg-blue-500/20   text-blue-300   text-xs font-semibold rounded-lg border border-blue-500/30   transition-all">🏥 Hospitals</button>
+        <button onclick="sendQuick('Which government schemes can I apply for?')"          class="qbtn flex-shrink-0 px-3 py-1.5 bg-purple-500/20 text-purple-300 text-xs font-semibold rounded-lg border border-purple-500/30 transition-all">🏛️ Schemes</button>
+        <button onclick="sendQuick('How do I compare treatment costs between hospitals?')" class="qbtn flex-shrink-0 px-3 py-1.5 bg-green-500/20  text-green-300  text-xs font-semibold rounded-lg border border-green-500/30  transition-all">💰 Compare</button>
+        <button onclick="sendQuick('How do I apply for Ayushman Bharat PM-JAY?')"         class="qbtn flex-shrink-0 px-3 py-1.5 bg-orange-500/20 text-orange-300 text-xs font-semibold rounded-lg border border-orange-500/30 transition-all">📋 Apply</button>
+        <button onclick="sendQuick('How do I book a doctor consultation?')"               class="qbtn flex-shrink-0 px-3 py-1.5 bg-pink-500/20   text-pink-300   text-xs font-semibold rounded-lg border border-pink-500/30   transition-all">📅 Book</button>
+        <button onclick="sendQuick('What is the cost of heart surgery in Bengaluru?')"    class="qbtn flex-shrink-0 px-3 py-1.5 bg-cyan-500/20   text-cyan-300   text-xs font-semibold rounded-lg border border-cyan-500/30   transition-all">❤️ Heart Surgery</button>
+        <button onclick="sendQuick('I have diabetes, what should I do?')"                 class="qbtn flex-shrink-0 px-3 py-1.5 bg-yellow-500/20 text-yellow-300 text-xs font-semibold rounded-lg border border-yellow-500/30 transition-all">🩺 Diabetes</button>
+    </div>
+
+    <!-- ── Input ── -->
+    <div class="px-4 py-3 bg-gray-800 border-t border-white/10 flex-shrink-0">
+        <div class="flex gap-2 items-end">
+            <textarea id="userInput" rows="1"
+                placeholder="Ask anything — hospitals, costs, schemes, symptoms..."
+                class="flex-1 bg-gray-700 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none leading-relaxed"
+                onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+            <button onclick="sendMessage()" id="sendBtn"
+                class="w-11 h-11 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center hover:shadow-lg hover:shadow-blue-500/40 transition-all flex-shrink-0 disabled:opacity-50">
+                <span class="material-symbols-rounded text-white text-lg">send</span>
+            </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-2 text-center">AI guidance only · Not a substitute for medical advice · Emergency: call <strong class="text-red-400">108</strong></p>
+    </div>
+
+    <script>
+    // ── Config ──────────────────────────────────────────────────────────────
+    const GEMINI_API_KEY = 'AIzaSyAGbal82FCb_yt2DYBIzYywJOQdQrAuIW8';
+    const GEMINI_MODELS  = ['gemini-2.5-flash', 'gemini-2.0-flash-lite', 'gemini-2.0-flash'];
+    let   modelIdx = 0;
+
+    // ── System Prompt ────────────────────────────────────────────────────────
+    const SYSTEM_PROMPT = `You are MedSentinel AI — a warm, friendly, and knowledgeable healthcare assistant for patients and users in India (primarily Karnataka).
+
+PERSONALITY:
+- Speak like a caring, knowledgeable friend — not a robot
+- Use simple, clear language. Avoid medical jargon unless asked
+- Be empathetic when users mention health problems or financial stress
+- Use emojis naturally to make responses feel warm (not excessive)
+- Ask follow-up questions when needed to give better guidance
+- Keep responses concise (under 180 words) unless user asks for details
+
+YOUR CAPABILITIES:
+1. Guide users through MedSentinel platform features
+2. Answer general health questions (symptoms, conditions, treatments) — always recommend seeing a doctor for diagnosis
+3. Explain government health schemes and eligibility
+4. Help users understand treatment costs
+5. Assist with hospital selection based on needs
+6. Provide step-by-step guidance for applying to schemes
+7. Answer general questions about healthcare in India
+
+MEDSENTINEL PLATFORM PAGES:
+- / → Home: search treatments
+- /search-flow.html → 3-step search (condition → patient details → results)
+- /hospitals.html → Browse & filter hospitals by specialization, distance, schemes
+- /comparison.html → Compare hospital costs side by side
+- /schemes.html → View all government schemes
+- /eligibility.html → Check scheme eligibility (income, location, family size)
+- /scheme-apply.html → Apply for a scheme
+- /book-consultation.html → Book a doctor appointment
+- /profile.html → Saved hospitals & applied schemes
+
+HOSPITALS IN SYSTEM (Karnataka):
+Government: KC General, Victoria Hospital, Bowring & Lady Curzon, Vani Vilas, Yelahanka General, Jayanagar General, Rajiv Gandhi Institute of Chest Diseases, Indira Gandhi Institute of Child Health
+Private: Manipal Hospital, Apollo Hospital, Narayana Health City, Fortis Hospital, Aster CMI, Sakra World, Columbia Asia, JSS Mysuru, Apollo BGS Mysuru, KMC Mangaluru, KIMS Hubli, KLE Belgaum
+
+GOVERNMENT SCHEMES:
+- Ayushman Bharat PM-JAY: ₹5L/year, income < ₹2L, 1,949+ procedures, helpline 14555
+- Aarogya Karnataka: ₹5L/year, Karnataka BPL/APL families, helpline 104
+- ESIC: Comprehensive, salaried employees earning < ₹21K/month, helpline 1800-11-2526
+- CGHS: Comprehensive, central govt employees & pensioners, helpline 1800-11-8900
+- Vajpayee Arogyashree: ₹2L/year, Karnataka BPL families, 403 procedures, helpline 104
+
+TREATMENT COSTS (Karnataka dataset):
+- General OPD: ₹94–₹2,000 | Inpatient: ₹300–₹7,000
+- Diabetes: ₹25,000–₹60,000 | General Surgery: ₹45,000–₹1,50,000
+- Cardiology: ₹50,000–₹2,00,000 | Knee Replacement: ₹80,000–₹5,00,000
+- Normal Delivery: ₹5,000–₹1,00,000 | C-Section: ₹10,000–₹2,00,000
+- Dialysis/session: ₹1,000–₹5,000 | Chemotherapy/cycle: ₹15,000–₹1,50,000
+- Government hospitals cost 40–60% less than private hospitals
+
+IMPORTANT RULES:
+- For emergencies (chest pain, stroke, accident, unconscious): ALWAYS say call 108 FIRST
+- Never diagnose diseases or prescribe medicines
+- When user asks about symptoms, acknowledge them empathetically and suggest seeing a doctor, then guide to relevant hospital/scheme
+- Always end responses with a helpful next step or question to keep conversation going
+- If user seems stressed about costs, reassure them about government schemes available`;
+
+    // ── Suggested follow-ups per topic ──────────────────────────────────────
+    const FOLLOW_UPS = {
+        hospital:    ['Which hospital is cheapest?', 'How do I save a hospital?', 'What is PM-JAY empanelled?'],
+        scheme:      ['Am I eligible for Ayushman Bharat?', 'How do I apply for a scheme?', 'What documents do I need?'],
+        cost:        ['How do I compare costs?', 'Are government hospitals cheaper?', 'Can schemes cover my treatment?'],
+        booking:     ['What departments are available?', 'Can I cancel a booking?', 'How long is the wait time?'],
+        emergency:   ['What hospitals have 24/7 ER?', 'How do I reach Victoria Hospital?', 'What is covered in emergency?'],
+        diabetes:    ['Which hospitals treat diabetes?', 'What is the cost of diabetes treatment?', 'Is diabetes covered by PM-JAY?'],
+        heart:       ['Which hospitals have cardiology?', 'What is angioplasty cost?', 'Is heart surgery covered by schemes?'],
+        general:     ['Tell me more', 'How do I get started?', 'What else can you help with?']
+    };
+
+    function getFollowUps(text) {
+        const t = text.toLowerCase();
+        if (t.includes('hospital') || t.includes('find'))          return FOLLOW_UPS.hospital;
+        if (t.includes('scheme') || t.includes('eligib') || t.includes('ayushman')) return FOLLOW_UPS.scheme;
+        if (t.includes('cost') || t.includes('price') || t.includes('compare'))     return FOLLOW_UPS.cost;
+        if (t.includes('book') || t.includes('consult') || t.includes('appoint'))   return FOLLOW_UPS.booking;
+        if (t.includes('emergency') || t.includes('urgent'))       return FOLLOW_UPS.emergency;
+        if (t.includes('diabet'))                                   return FOLLOW_UPS.diabetes;
+        if (t.includes('heart') || t.includes('cardiac') || t.includes('cardio'))   return FOLLOW_UPS.heart;
+        return FOLLOW_UPS.general;
+    }
+
+    // ── Offline fallback ─────────────────────────────────────────────────────
+    const OFFLINE = {
+        emergency: '🚨 **Call 108 immediately** for any medical emergency!\n\nFor urgent hospital info, go to the **Hospitals page** and filter by "24/7 ER".',
+        hospital:  '🏥 To find hospitals:\n1. Go to **Hospitals page** (/hospitals.html)\n2. Use filters: specialization, distance, rating, schemes\n3. Click **View Details** for cost breakdown\n\nNeed help with a specific condition?',
+        scheme:    '🏛️ To check scheme eligibility:\n1. Visit **Eligibility Checker** (/eligibility.html)\n2. Select your income, location & family size\n3. See matched schemes instantly\n\n**Available schemes:** PM-JAY (₹5L), Aarogya Karnataka (₹5L), ESIC, CGHS, Vajpayee Arogyashree (₹2L)',
+        cost:      '💰 To compare treatment costs:\n1. Go to **Comparison page** (/comparison.html)\n2. Search and add hospitals (up to 4)\n3. Select a treatment\n4. See side-by-side cost chart & table\n\nGovernment hospitals are typically 40–60% cheaper than private.',
+        apply:     '📋 To apply for a scheme:\n1. Check eligibility at /eligibility.html\n2. Click **Apply Now** on matched scheme\n3. Fill the application form\n4. Submit — you\'ll get an Application ID\n\nYour application appears in **Profile → Saved Schemes**.',
+        book:      '📅 To book a consultation:\n1. Find a hospital at /hospitals.html\n2. Click **View Details**\n3. Click **Book Consultation**\n4. Fill your details & preferred time\n\nYou\'ll get instant confirmation!',
+        diabetes:  '🩺 For diabetes treatment:\n- **Cost range:** ₹25,000–₹60,000\n- **Covered under:** Ayushman Bharat PM-JAY, Aarogya Karnataka\n- **Recommended hospitals:** Manipal, Apollo, Narayana Health City\n\nCheck eligibility at /eligibility.html to reduce your costs significantly.',
+        heart:     '❤️ For cardiac treatment:\n- **Cost range:** ₹50,000–₹2,00,000\n- **Covered under:** PM-JAY (up to ₹5L)\n- **Top hospitals:** Narayana Health City, Manipal, KIMS Hubli\n\nGo to /comparison.html to compare costs across hospitals.',
+        default:   '👋 I\'m here to help! I can assist with:\n• 🏥 Finding hospitals\n• 💰 Comparing treatment costs\n• 🏛️ Government scheme eligibility\n• 📋 Scheme applications\n• 📅 Booking consultations\n\nWhat would you like help with?'
+    };
+
+    function getOfflineResponse(text) {
+        const t = text.toLowerCase();
+        if (t.includes('emergency') || t.includes('urgent') || t.includes('ambulance') || t.includes('108')) return OFFLINE.emergency;
+        if (t.includes('diabet')) return OFFLINE.diabetes;
+        if (t.includes('heart') || t.includes('cardiac') || t.includes('cardio')) return OFFLINE.heart;
+        if (t.includes('hospital') || t.includes('find') || t.includes('near')) return OFFLINE.hospital;
+        if (t.includes('scheme') || t.includes('eligib') || t.includes('pmjay') || t.includes('ayushman') || t.includes('aarogya')) return OFFLINE.scheme;
+        if (t.includes('cost') || t.includes('price') || t.includes('compare') || t.includes('cheap')) return OFFLINE.cost;
+        if (t.includes('apply') || t.includes('application') || t.includes('enroll')) return OFFLINE.apply;
+        if (t.includes('book') || t.includes('appointment') || t.includes('consult')) return OFFLINE.book;
+        return OFFLINE.default;
+    }
+
+    // ── State ────────────────────────────────────────────────────────────────
+    let chatHistory = [];
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    window.onload = () => {
+        addBotMessage(
+            `👋 Hi there! I'm **MedSentinel AI**, your personal healthcare guide.\n\nI can help you with:\n• 🏥 Finding affordable hospitals in Karnataka\n• 💰 Comparing treatment costs\n• 🏛️ Government scheme eligibility & applications\n• 📅 Booking doctor consultations\n• 🩺 General health questions\n\nWhat's on your mind today?`,
+            ['Find hospitals near me', 'Check scheme eligibility', 'Compare treatment costs', 'I have a health question']
+        );
+    };
+
+    // ── UI Helpers ───────────────────────────────────────────────────────────
+    function autoResize(el) {
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    }
+
+    function handleKey(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    }
+
+    function sendQuick(text) {
+        document.getElementById('userInput').value = text;
+        sendMessage();
+    }
+
+    function scrollBottom() {
+        const m = document.getElementById('messages');
+        setTimeout(() => m.scrollTop = m.scrollHeight, 50);
+    }
+
+    function escapeHtml(t) {
+        return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function formatText(text) {
+        return text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/`(.*?)`/g, '<code class="bg-white/10 px-1 rounded text-blue-300 text-xs">$1</code>')
+            // Convert page links like /hospitals.html to clickable
+            .replace(/\(?(\/[\w\-\.]+\.html)\)?/g, '(<a class="bot-link" onclick="openPage(\'$1\')">$1</a>)')
+            .replace(/\n/g, '<br>');
+    }
+
+    function openPage(url) {
+        window.opener ? window.opener.location.href = url : window.open(url, '_blank');
+    }
+
+    function addUserMessage(text) {
+        const div = document.createElement('div');
+        div.className = 'msg-user flex gap-2 items-end justify-end';
+        div.innerHTML =
+            '<div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl rounded-br-sm px-4 py-3 max-w-[82%] text-sm text-white leading-relaxed shadow-lg">'
+            + escapeHtml(text) + '</div>'
+            + '<div class="w-7 h-7 bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0 mb-0.5">'
+            + '<span class="material-symbols-rounded text-gray-300 text-sm">person</span></div>';
+        document.getElementById('messages').appendChild(div);
+        scrollBottom();
+    }
+
+    function addBotMessage(text, chips) {
+        const div = document.createElement('div');
+        div.className = 'msg-bot flex gap-2 items-start';
+
+        let chipsHtml = '';
+        if (chips && chips.length) {
+            chipsHtml = '<div class="flex flex-wrap gap-1.5 mt-3">'
+                + chips.map(c =>
+                    '<button onclick="sendQuick(\'' + c.replace(/'/g, "\\'") + '\')" class="chip px-2.5 py-1 bg-blue-500/15 text-blue-300 text-xs rounded-lg border border-blue-500/25 hover:bg-blue-500/30 transition-all">'
+                    + c + '</button>').join('')
+                + '</div>';
+        }
+
+        div.innerHTML =
+            '<div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 shadow">'
+            + '<span class="material-symbols-rounded text-white text-sm">health_and_safety</span></div>'
+            + '<div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%] text-sm text-gray-100 leading-relaxed border border-white/5 shadow">'
+            + formatText(text) + chipsHtml + '</div>';
+
+        document.getElementById('messages').appendChild(div);
+        scrollBottom();
+    }
+
+    function showTyping() {
+        const div = document.createElement('div');
+        div.id = 'typingIndicator';
+        div.className = 'msg-bot flex gap-2 items-start';
+        div.innerHTML =
+            '<div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow">'
+            + '<span class="material-symbols-rounded text-white text-sm">health_and_safety</span></div>'
+            + '<div class="bg-gray-800 rounded-2xl rounded-tl-sm px-4 py-3 border border-white/5 shadow">'
+            + '<div class="typing flex gap-1 items-center h-5"><span></span><span></span><span></span></div></div>';
+        document.getElementById('messages').appendChild(div);
+        scrollBottom();
+    }
+
+    function removeTyping() {
+        const t = document.getElementById('typingIndicator');
+        if (t) t.remove();
+    }
+
+    function clearChat() {
+        chatHistory = [];
+        modelIdx = 0;
+        document.getElementById('messages').innerHTML = '';
+        window.onload();
+    }
+
+    // ── Send Message ─────────────────────────────────────────────────────────
+    async function sendMessage() {
+        const input = document.getElementById('userInput');
+        const text  = input.value.trim();
+        if (!text) return;
+
+        input.value = '';
+        input.style.height = 'auto';
+        document.getElementById('sendBtn').disabled = true;
+
+        addUserMessage(text);
+        chatHistory.push({ role: 'user', parts: [{ text }] });
+        showTyping();
+
+        let replied = false;
+
+        for (let i = modelIdx; i < GEMINI_MODELS.length; i++) {
+            try {
+                // Inject system prompt into first user message
+                const contents = chatHistory.length === 1
+                    ? [{ role: 'user', parts: [{ text: SYSTEM_PROMPT + '\n\n---\nUser message: ' + text }] }]
+                    : [
+                        { role: 'user', parts: [{ text: SYSTEM_PROMPT + '\n\n---\nUser message: ' + chatHistory[0].parts[0].text }] },
+                        ...chatHistory.slice(1).map(m => ({ role: m.role, parts: m.parts }))
+                      ];
+
+                const res  = await fetch(
+                    'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODELS[i] + ':generateContent?key=' + GEMINI_API_KEY,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents,
+                            generationConfig: { maxOutputTokens: 400, temperature: 0.75, topP: 0.9 }
+                        })
+                    }
+                );
+
+                const data = await res.json();
+
+                if (res.status === 429 || data.error) { modelIdx = i + 1; continue; }
+
+                if (data.candidates && data.candidates[0]) {
+                    const reply = data.candidates[0].content.parts[0].text;
+                    chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+                    removeTyping();
+                    addBotMessage(reply, getFollowUps(text));
+                    replied = true;
+                    break;
+                }
+            } catch (err) { continue; }
+        }
+
+        if (!replied) {
+            removeTyping();
+            const fallback = getOfflineResponse(text);
+            chatHistory.push({ role: 'model', parts: [{ text: fallback }] });
+            addBotMessage(fallback, getFollowUps(text));
+        }
+
+        document.getElementById('sendBtn').disabled = false;
+        document.getElementById('userInput').focus();
+    }
+    </script>
+</body>
+</html>

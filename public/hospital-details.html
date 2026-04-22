@@ -169,7 +169,7 @@
                     <span class="material-symbols-rounded text-orange-400 text-4xl mb-3 block">emergency</span>
                     <h4 class="font-bold text-white mb-2">24/7 Emergency</h4>
                     <p class="text-sm text-gray-300 mb-4">Round-the-clock emergency services available</p>
-                    <button class="w-full py-2 bg-gradient-to-r from-orange-600 to-red-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-orange-500/50 transition-all">
+                    <button onclick="callNow()" class="w-full py-2 bg-gradient-to-r from-orange-600 to-red-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-orange-500/50 transition-all">
                         Call Now
                     </button>
                 </div>
@@ -178,6 +178,16 @@
     </main>
 
     <script>
+        function callNow() {
+            // Get hospital phone from loaded data or use a default
+            const phone = localStorage.getItem('hospitalPhone') || '+91-1234567890';
+            if (navigator.userAgent.match(/mobile/i)) {
+                window.location.href = `tel:${phone}`;
+            } else {
+                alert(`Call: ${phone}`);
+            }
+        }
+
         async function loadHospitalDetails() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
@@ -218,7 +228,11 @@
         }
 
         function bookConsultation() {
-            window.location.href = '/book-consultation.html';
+            const hospitalName = document.getElementById('hospitalName').textContent;
+            const hospitalLocation = document.getElementById('hospitalLocation').querySelector('span:last-child').textContent;
+            const params = new URLSearchParams(window.location.search);
+            const hospitalId = params.get('id');
+            window.location.href = `/book-consultation.html?hospitalId=${hospitalId}&hospitalName=${encodeURIComponent(hospitalName)}&hospitalLocation=${encodeURIComponent(hospitalLocation)}`;
         }
 
         loadHospitalDetails();
