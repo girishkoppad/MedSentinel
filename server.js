@@ -2,6 +2,7 @@ import express from 'express';
 import sqlite3 from 'sqlite3';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import compression from 'compression';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
@@ -13,8 +14,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(compression()); // Enable gzip compression
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+
+// Cache static assets for 1 hour
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '1h',
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css') || path.endsWith('.js')) {
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+    }
+  }
+}));
 
 // Database setup - use /tmp for Vercel or current directory for local
 const dbPath = process.env.VERCEL ? '/tmp/medsentinel.db' : './medsentinel.db';
@@ -64,6 +75,17 @@ db.serialize(() => {
     hospital_id INTEGER,
     saved_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+
+  // Create indexes for better performance
+  db.run(`CREATE INDEX IF NOT EXISTS idx_hospitals_name ON hospitals(name)`);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_hospitals_location ON hospitals(location)`);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_hospitals_specialization ON hospitals(specialization)`);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_hospitals_rating ON hospitals(rating)`);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_hospitals_distance ON hospitals(distance)`);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_hospitals_schemes ON hospitals(schemes)`);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_saved_items_user_id ON saved_items(user_id)`);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_saved_items_hospital_id ON saved_items(hospital_id)`);
 
   // Only seed if DB is empty (prevents duplicates on restart)
   db.get('SELECT COUNT(*) as count FROM hospitals', (err, row) => {

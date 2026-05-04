@@ -2,6 +2,38 @@
 
 const API_BASE = window.location.origin + '/api';
 
+// Register service worker for caching
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('Service Worker registered:', registration);
+            })
+            .catch((error) => {
+                console.log('Service Worker registration failed:', error);
+            });
+    });
+}
+
+// Mobile menu functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.querySelector('nav .hidden.md\\:flex');
+    
+    if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('show');
+        });
+        
+        // Close menu when clicking a link
+        mobileMenu.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') {
+                mobileMenu.classList.remove('show');
+            }
+        });
+    }
+});
+
 // Search functionality
 function goToSearchFlow() {
     const query = document.getElementById('searchInput').value.trim();
